@@ -17,8 +17,8 @@ app.listen(PORT, () => console.log(`Example app listening at http://127.0.0.1:${
 function handleIndex(request, response) {
   var battlesnakeInfo = {
     apiversion: '1',
-    author: '',
-    color: '#888888',
+    author: 'Kevin Lu',
+    color: '#f1f1f1',
     head: 'default',
     tail: 'default'
   }
