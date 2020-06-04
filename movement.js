@@ -1,3 +1,5 @@
+var lastMove = "up";    
+
 const move = (gameData) => {
     const head = gameData.you.head;
     const body = gameData.you.body;
@@ -6,35 +8,43 @@ const move = (gameData) => {
     if (food) {
         if (head.x > food[0].x) {
             if (!willSelfCollide(head, body, "left")) {
+                lastMove = "left";
                 return "left";
             } else {
+                lastMove = "right";
                 return "right";
             }
         }
         if (head.x < food[0].x) {
             if (!willSelfCollide(head, body, "right")) {
+                lastMove = "right";
                 return "right";
             } else {
+                lastMove = "left";
                 return "left";
             }
         }
         if (head.y > food[0].x) {
             if (!willSelfCollide(head, body, "down")) {
+                lastMove = "down";
                 return "down";
             } else {
+                lastMove = "up";
                 return "up";
             }
         }
         if (head.y < food[0].x) {
             if (!willSelfCollide(head, body, "up")) {
+                lastMove = "up";
                 return "up";
             } else {
+                lastMove = "down";
                 return "down";
             }
         }
-        return "down";
+        return lastMove;
     } else {
-        return "down";
+        return lastMove;
     }
 }
 
