@@ -4,10 +4,11 @@ const move = (gameData) => {
     const head = gameData.you.head;
     const body = gameData.you.body;
     const food = gameData.board.food;
+    const size = gameData.board.width;
 
     if (food) {
         if (head.x > food[0].x) {
-            if (!willSelfCollide(head, body, "left")) {
+            if (!willSelfCollide(head, body, size, "left")) {
                 lastMove = "left";
                 return "left";
             } else {
@@ -16,7 +17,7 @@ const move = (gameData) => {
             }
         }
         if (head.x < food[0].x) {
-            if (!willSelfCollide(head, body, "right")) {
+            if (!willSelfCollide(head, body, size, "right")) {
                 lastMove = "right";
                 return "right";
             } else {
@@ -25,7 +26,7 @@ const move = (gameData) => {
             }
         }
         if (head.y > food[0].x) {
-            if (!willSelfCollide(head, body, "down")) {
+            if (!willSelfCollide(head, body, size, "down")) {
                 lastMove = "down";
                 return "down";
             } else {
@@ -34,7 +35,7 @@ const move = (gameData) => {
             }
         }
         if (head.y < food[0].x) {
-            if (!willSelfCollide(head, body, "up")) {
+            if (!willSelfCollide(head, body, size, "up")) {
                 lastMove = "up";
                 return "up";
             } else {
@@ -48,32 +49,32 @@ const move = (gameData) => {
     }
 }
 
-const willSelfCollide = (head, body, move) => {
+const willSelfCollide = (head, body, size, move) => {
     switch (move) {
         case "left":
             var newHeadLocation = { "x": head.x - 1, "y": head.y };
-            if (containsObject(newHeadLocation, body)) {
+            if (containsObject(newHeadLocation, body) || newHeadLocation.x === 0) {
                 return true;
             } else {
                 return false;
             }
         case "right":
             var newHeadLocation = { "x": head.x + 1, "y": head.y };
-            if (containsObject(newHeadLocation, body)) {
+            if (containsObject(newHeadLocation, body) || newHeadLocation.x === size) {
                 return true;
             } else {
                 return false;
             }
         case "up":
             var newHeadLocation = { "x": head.x, "y": head.y + 1 };
-            if (containsObject(newHeadLocation, body)) {
+            if (containsObject(newHeadLocation, body) || newHeadLocation.y === 11) {
                 return true;
             } else {
                 return false;
             }
         case "down":
             var newHeadLocation = { "x": head.x, "y": head.y - 1 };
-            if (containsObject(newHeadLocation, body)) {
+            if (containsObject(newHeadLocation, body) || newHeadLocation.y === 0) {
                 return true;
             } else {
                 return false;
