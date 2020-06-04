@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser')
 const express = require('express')
+const move = require('./movement');
 
 const PORT = process.env.PORT || 3000
 
@@ -12,7 +13,6 @@ app.post('/move', handleMove)
 app.post('/end', handleEnd)
 
 app.listen(PORT, () => console.log(`Example app listening at http://127.0.0.1:${PORT}`))
-
 
 function handleIndex(request, response) {
   var battlesnakeInfo = {
@@ -35,12 +35,11 @@ function handleStart(request, response) {
 function handleMove(request, response) {
   var gameData = request.body
 
-  var possibleMoves = ['up', 'down', 'left', 'right']
-  var move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)]
+  const myMove = move(gameData);
 
-  console.log('MOVE: ' + move)
+  console.log('MOVE: ' + myMove)
   response.status(200).send({
-    move: move
+    move: myMove
   })
 }
 
