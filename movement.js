@@ -1,13 +1,22 @@
-var lastMove = "up";    
+var lastMove = "up";
 
 const move = (gameData) => {
     const head = gameData.you.head;
     const body = gameData.you.body;
     const food = gameData.board.food;
     const size = gameData.board.width;
+    var closestFood = food[0];
+    var dist = calculateDistance(closestFood, head);
 
     if (food) {
-        if (head.x > food[0].x) {
+        food.forEach(f => {
+            var newDist = calculateDistance(f, head);
+            if (newDist < dist) {
+                closestFood = f;
+                dist = newDist;
+            }
+        });
+        if (head.x > closestFood.x) {
             if (!willSelfCollide(head, body, size, "left")) {
                 lastMove = "left";
                 return "left";
@@ -16,7 +25,7 @@ const move = (gameData) => {
                 return "right";
             }
         }
-        if (head.x < food[0].x) {
+        if (head.x < closestFood.x) {
             if (!willSelfCollide(head, body, size, "right")) {
                 lastMove = "right";
                 return "right";
@@ -25,7 +34,7 @@ const move = (gameData) => {
                 return "left";
             }
         }
-        if (head.y > food[0].x) {
+        if (head.y > closestFood.x) {
             if (!willSelfCollide(head, body, size, "down")) {
                 lastMove = "down";
                 return "down";
@@ -34,7 +43,7 @@ const move = (gameData) => {
                 return "up";
             }
         }
-        if (head.y < food[0].x) {
+        if (head.y < closestFood.x) {
             if (!willSelfCollide(head, body, size, "up")) {
                 lastMove = "up";
                 return "up";
@@ -93,6 +102,10 @@ const containsObject = (obj, list) => {
     }
 
     return false;
+}
+
+const calculateDistance = (p1, p2) => {
+    return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
 }
 
 module.exports = move
