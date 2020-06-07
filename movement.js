@@ -20,70 +20,88 @@ const move = (gameData) => {
             if (!willSelfCollide(head, body, size, "left")) {
                 lastMove = "left";
                 return "left";
-            } else {
-                lastMove = "right";
-                return "right";
             }
         }
         if (head.x < closestFood.x) {
             if (!willSelfCollide(head, body, size, "right")) {
                 lastMove = "right";
                 return "right";
-            } else {
-                lastMove = "left";
-                return "left";
             }
         }
-        if (head.y > closestFood.x) {
+        if (head.x === closestFood.x) {
+            if (head.y > closestFood.y) {
+                if (!willSelfCollide(head, body, size, "down")) {
+                    lastMove = "down";
+                    return "down";
+                }
+            }
+            if (head.y < closestFood.y) {
+                if (!willSelfCollide(head, body, size, "up")) {
+                    lastMove = "up";
+                    return "up";
+                }
+            }
+        }
+
+        if (head.y > closestFood.y) {
             if (!willSelfCollide(head, body, size, "down")) {
                 lastMove = "down";
                 return "down";
-            } else {
-                lastMove = "up";
-                return "up";
             }
         }
-        if (head.y < closestFood.x) {
+        if (head.y < closestFood.y) {
             if (!willSelfCollide(head, body, size, "up")) {
                 lastMove = "up";
                 return "up";
-            } else {
-                lastMove = "down";
-                return "down";
             }
         }
-        return lastMove;
-    } else {
-        return lastMove;
+        if (head.y === closestFood.y) {
+            if (head.x > closestFood.x) {
+                if (!willSelfCollide(head, body, size, "left")) {
+                    lastMove = "left";
+                    return "left";
+                }
+            }
+            if (head.x < closestFood.x) {
+                if (!willSelfCollide(head, body, size, "right")) {
+                    lastMove = "right";
+                    return "right";
+                }
+            }
+        }
     }
 }
 
 const willSelfCollide = (head, body, size, move) => {
     switch (move) {
         case "left":
-            var newHeadLocation = { "x": head.x - 1, "y": head.y };
-            if (containsObject(newHeadLocation, body) || newHeadLocation.x === 0) {
+            var leftLoc = { "x": head.x - 1, "y": head.y };
+            if (containsObject(leftLoc, body) || leftLoc.x === -1) {
+                console.log('\x1b[36m%s\x1b[0m', `WILL COLLIDE IF ${move}`);
                 return true;
             } else {
                 return false;
             }
         case "right":
-            var newHeadLocation = { "x": head.x + 1, "y": head.y };
-            if (containsObject(newHeadLocation, body) || newHeadLocation.x === size) {
+            var rightLoc = { "x": head.x + 1, "y": head.y };
+            if (containsObject(rightLoc, body) || rightLoc.x === size + 1) {
+                console.log('\x1b[36m%s\x1b[0m', `WILL COLLIDE IF ${move}`);
                 return true;
             } else {
                 return false;
             }
         case "up":
-            var newHeadLocation = { "x": head.x, "y": head.y + 1 };
-            if (containsObject(newHeadLocation, body) || newHeadLocation.y === 11) {
+            var upLoc = { "x": head.x, "y": head.y + 1 };
+            if (containsObject(upLoc, body) || upLoc.y === size + 1) {
+                console.log('\x1b[36m%s\x1b[0m', `WILL COLLIDE IF ${move}`);
                 return true;
             } else {
                 return false;
             }
         case "down":
-            var newHeadLocation = { "x": head.x, "y": head.y - 1 };
-            if (containsObject(newHeadLocation, body) || newHeadLocation.y === 0) {
+            var downLoc = { "x": head.x, "y": head.y - 1 };
+            if (containsObject(downLoc, body) || downLoc.y === -1) {
+                console.log('\x1b[36m%s\x1b[0m', `WILL COLLIDE IF ${move}`);
                 return true;
             } else {
                 return false;
