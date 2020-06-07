@@ -1,4 +1,16 @@
 //const createGrid = require('./grid');
+var myId;
+var snakes;
+var head;
+var body;
+var tail;
+var food;
+var size;
+var length;
+var moves;
+var closestFood;
+var dist;
+var health;
 
 var lastMove = "up";
 const DIRECTIONS = ['up', 'right', 'down', 'left'];
@@ -6,17 +18,21 @@ const DIRECTIONS = ['up', 'right', 'down', 'left'];
 const move = (gameData) => {
     //const Grid = createGrid(gameData);
     //console.log(Grid);
-    const myId = gameData.you.id;
-    const snakes = gameData.board.snakes;
-    const head = gameData.you.head;
-    const body = gameData.you.body;
-    const food = gameData.board.food;
-    const size = gameData.board.width;
-    var moves = possibleMoves(head);
-    var closestFood = food[0];
-    var dist = calculateDistance(closestFood, head);
 
-    if (food) {
+    myId = gameData.you.id;
+    snakes = gameData.board.snakes;
+    head = gameData.you.head;
+    body = gameData.you.body;
+    tail = body[body.length - 1];
+    food = gameData.board.food;
+    size = gameData.board.width;
+    length = gameData.you.length;
+    moves = possibleMoves(head);
+    closestFood = food[0];
+    dist = calculateDistance(closestFood, head);
+    health = gameData.you.health;
+
+    if (food && health < 97) {
         food.forEach(f => {
             var newDist = calculateDistance(f, head);
             if (newDist < dist && isThisFoodSafe(closestFood, gameData.you, snakes)) {
@@ -24,66 +40,10 @@ const move = (gameData) => {
                 dist = newDist;
             }
         });
-        if (head.x > closestFood.x) {
-            moves.left.hasFood = true;
-            console.log("\x1b[35m%s\x1b[0m", `Attemping to move LEFT to (${closestFood.x}, ${closestFood.y})`);
-            if (!willCollide(myId, snakes, head, body, size, "left")) {
-                moves.left.safe = true;
-            }
-        }
-        if (head.x < closestFood.x) {
-            moves.right.hasFood = true;
-            console.log("\x1b[35m%s\x1b[0m", `Attemping to move RIGHT to (${closestFood.x}, ${closestFood.y})`);
-            if (!willCollide(myId, snakes, head, body, size, "right")) {
-                moves.right.safe = true;
-            }
-        }
-        if (head.x === closestFood.x) {
-            console.log("\x1b[35m%s\x1b[0m", 'Head on same x coord as food');
-            if (head.y > closestFood.y) {
-                moves.down.hasFood = true;
-                if (!willCollide(myId, snakes, head, body, size, "down")) {
-                    moves.down.safe = true;
-                }
-            }
-            if (head.y < closestFood.y) {
-                moves.up.hasFood = true;
-                if (!willCollide(myId, snakes, head, body, size, "up")) {
-                    moves.up.safe = true;
-                }
-            }
-        }
-
-        if (head.y > closestFood.y) {
-            moves.down.hasFood = true;
-            console.log("\x1b[35m%s\x1b[0m", `Attemping to move DOWN to (${closestFood.x}, ${closestFood.y})`);
-            if (!willCollide(myId, snakes, head, body, size, "down")) {
-                moves.down.safe = true;
-            }
-        }
-        if (head.y < closestFood.y) {
-            moves.up.hasFood = true;
-            console.log("\x1b[35m%s\x1b[0m", `Attemping to move UP to (${closestFood.x}, ${closestFood.y})`);
-            if (!willCollide(myId, snakes, head, body, size, "up")) {
-                moves.up.safe = true;
-            }
-        }
-        if (head.y === closestFood.y) {
-            console.log("\x1b[35m%s\x1b[0m", 'Head on same y coord as food');
-            if (head.x > closestFood.x) {
-                moves.left.hasFood = true;
-                if (!willCollide(myId, snakes, head, body, size, "left")) {
-                    moves.left.safe = true;
-                }
-            }
-            if (head.x < closestFood.x) {
-                moves.right.hasFood = true;
-                if (!willCollide(myId, snakes, head, body, size, "right")) {
-                    moves.right.safe = true;
-                }
-            }
-        }
+    } else {
+        closestFood = tail;
     }
+    makeMove();
     // Check if any space is safe even if there's no food
     for (let d of DIRECTIONS) {
         if (!willCollide(myId, snakes, head, body, size, d)) {
@@ -102,6 +62,68 @@ const move = (gameData) => {
     }
     console.log(moves);
     return finalMove;
+}
+
+const makeMove = () => {
+    if (head.x > closestFood.x) {
+        moves.left.hasFood = true;
+        console.log("\x1b[35m%s\x1b[0m", `Attemping to move LEFT to (${closestFood.x}, ${closestFood.y})`);
+        if (!willCollide(myId, snakes, head, body, size, "left")) {
+            moves.left.safe = true;
+        }
+    }
+    if (head.x < closestFood.x) {
+        moves.right.hasFood = true;
+        console.log("\x1b[35m%s\x1b[0m", `Attemping to move RIGHT to (${closestFood.x}, ${closestFood.y})`);
+        if (!willCollide(myId, snakes, head, body, size, "right")) {
+            moves.right.safe = true;
+        }
+    }
+    if (head.x === closestFood.x) {
+        console.log("\x1b[35m%s\x1b[0m", 'Head on same x coord as food');
+        if (head.y > closestFood.y) {
+            moves.down.hasFood = true;
+            if (!willCollide(myId, snakes, head, body, size, "down")) {
+                moves.down.safe = true;
+            }
+        }
+        if (head.y < closestFood.y) {
+            moves.up.hasFood = true;
+            if (!willCollide(myId, snakes, head, body, size, "up")) {
+                moves.up.safe = true;
+            }
+        }
+    }
+
+    if (head.y > closestFood.y) {
+        moves.down.hasFood = true;
+        console.log("\x1b[35m%s\x1b[0m", `Attemping to move DOWN to (${closestFood.x}, ${closestFood.y})`);
+        if (!willCollide(myId, snakes, head, body, size, "down")) {
+            moves.down.safe = true;
+        }
+    }
+    if (head.y < closestFood.y) {
+        moves.up.hasFood = true;
+        console.log("\x1b[35m%s\x1b[0m", `Attemping to move UP to (${closestFood.x}, ${closestFood.y})`);
+        if (!willCollide(myId, snakes, head, body, size, "up")) {
+            moves.up.safe = true;
+        }
+    }
+    if (head.y === closestFood.y) {
+        console.log("\x1b[35m%s\x1b[0m", 'Head on same y coord as food');
+        if (head.x > closestFood.x) {
+            moves.left.hasFood = true;
+            if (!willCollide(myId, snakes, head, body, size, "left")) {
+                moves.left.safe = true;
+            }
+        }
+        if (head.x < closestFood.x) {
+            moves.right.hasFood = true;
+            if (!willCollide(myId, snakes, head, body, size, "right")) {
+                moves.right.safe = true;
+            }
+        }
+    }
 }
 
 const possibleMoves = (head) => {
