@@ -166,10 +166,11 @@ const containsObject = (obj, list) => {
 const collideWithOtherSnakes = (myId, head, snakes) => {
     var i;
     for (i = 0; i < snakes.length; i++) {
-        if (snakes[i].id != myId) {
+        if (snakes[i].id !== myId) {
             var j;
             for (j = 0; j < snakes[i].body.length; j++) {
-                if (head.x === snakes[i].body[j].x && head.y === snakes[i].body[j].y) {
+                if ((head.x === snakes[i].body[j].x && head.y === snakes[i].body[j].y) ||
+                    (head.x === snakes[i].head.x && head.y === snakes[i].head.y)) {
                     return true;
                 }
             }
@@ -184,7 +185,7 @@ const isThisFoodSafe = (foodLoc, me, snakes) => {
     for (let d of DIRECTIONS) {
         var loc = locationsNearFood[d];
         for (let s of snakes) {
-            if (me.head.x === loc.x && me.head.y === loc.y && s.length >= me.length) {
+            if (me.id !== s.id && me.head.x === loc.x && me.head.y === loc.y && s.length >= me.length) {
                 console.log("\x1b[31m%s\x1b[0m", "FOOD NOT SAFE: " + `(${foodLoc.x}, ${foodLoc.y})`);
                 return false;
             }
