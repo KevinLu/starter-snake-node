@@ -37,7 +37,7 @@ function handleMove(request, response) {
 
   const myMove = move(gameData);
 
-  console.log(`MOVE #${gameData.turn}: ` + myMove)
+  console.log("\x1b[0m", `MOVE #${gameData.turn}: ` + myMove)
   response.status(200).send({
     move: myMove
   })

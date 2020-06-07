@@ -17,18 +17,21 @@ const move = (gameData) => {
             }
         });
         if (head.x > closestFood.x) {
+            console.log("\x1b[35m", `Attemping to move LEFT to (${closestFood.x}, ${closestFood.y})`);
             if (!willSelfCollide(head, body, size, "left")) {
                 lastMove = "left";
                 return "left";
             }
         }
         if (head.x < closestFood.x) {
+            console.log("\x1b[35m", `Attemping to move RIGHT to (${closestFood.x}, ${closestFood.y})`);
             if (!willSelfCollide(head, body, size, "right")) {
                 lastMove = "right";
                 return "right";
             }
         }
         if (head.x === closestFood.x) {
+            console.log("\x1b[35m", 'Head on same x coord as food');
             if (head.y > closestFood.y) {
                 if (!willSelfCollide(head, body, size, "down")) {
                     lastMove = "down";
@@ -44,18 +47,21 @@ const move = (gameData) => {
         }
 
         if (head.y > closestFood.y) {
+            console.log("\x1b[35m", `Attemping to move DOWN to (${closestFood.x}, ${closestFood.y})`);
             if (!willSelfCollide(head, body, size, "down")) {
                 lastMove = "down";
                 return "down";
             }
         }
         if (head.y < closestFood.y) {
+            console.log("\x1b[35m", `Attemping to move UP to (${closestFood.x}, ${closestFood.y})`);
             if (!willSelfCollide(head, body, size, "up")) {
                 lastMove = "up";
                 return "up";
             }
         }
         if (head.y === closestFood.y) {
+            console.log("\x1b[35m", 'Head on same y coord as food');
             if (head.x > closestFood.x) {
                 if (!willSelfCollide(head, body, size, "left")) {
                     lastMove = "left";
@@ -114,7 +120,7 @@ const willSelfCollide = (head, body, size, move) => {
 const containsObject = (obj, list) => {
     var i;
     for (i = 0; i < list.length; i++) {
-        if (list[i] === obj) {
+        if (obj.x === list[i].x && obj.y === list[i].y) {
             return true;
         }
     }
@@ -123,7 +129,7 @@ const containsObject = (obj, list) => {
 }
 
 const calculateDistance = (p1, p2) => {
-    return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+    return Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2);
 }
 
 module.exports = move
