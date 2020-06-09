@@ -13,9 +13,14 @@ var dist;
 var health;
 
 var ate = false;
-var timesAte = 0;
 var lastMove = "up";
 const DIRECTIONS = ['up', 'right', 'down', 'left'];
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 const move = (gameData) => {
     //const Grid = createGrid(gameData);
@@ -35,11 +40,7 @@ const move = (gameData) => {
     dist = calculateDistance(closestFood, head);
     health = gameData.you.health;
 
-    if (head.x === closestFood.x && head.y === closestFood.y) {
-        timesAte++;
-    }
-
-    if ((food && health < 50) || timesAte > 3) {
+    /*if ((food && health < 50) || length > 6) {
         food.forEach(f => {
             var newDist = calculateDistance(f, head);
             if (newDist < dist && isThisFoodSafe(closestFood, gameData.you, snakes)) {
@@ -48,11 +49,25 @@ const move = (gameData) => {
                 ate = true;
             }
         });
-    } else if (!ate && timesAte < 3) {
-        closestFood = { x: 10 - timesAte, y: 2 + timesAte };
+    } else if (!ate && length < 7) {
+        closestFood = { x: 10 - length + 4, y: 2 + length + 4 };
     } else {
         closestFood = tail;
         ate = false;
+    }*/
+
+    if (food) {
+        food.forEach(f => {
+            var newDist = calculateDistance(f, head);
+            if (newDist < dist && isThisFoodSafe(closestFood, gameData.you, snakes)) {
+                closestFood = f;
+                dist = newDist;
+                ate = true;
+            }
+        });
+    } else {
+        const randDir = DIRECTIONS[getRandomInt(0, 3)];
+        closestFood = moves[randDir];
     }
     makeMove();
     // Check if any space is safe even if there's no food
@@ -215,11 +230,13 @@ const collideWithOtherSnakes = (myId, head, snakes) => {
             for (j = 0; j < snakes[i].body.length; j++) {
                 if ((head.x === snakes[i].body[j].x && head.y === snakes[i].body[j].y) ||
                     (head.x === snakes[i].head.x && head.y === snakes[i].head.y) ||
-                    (head.x === prediction.x && head.y === prediction.y) ||
-                    (head.x === snakes[i].head.x + 1 && head.y === snakes[i].head.y) ||
-                    (head.x === snakes[i].head.x - 1 && head.y === snakes[i].head.y) ||
-                    (head.x === snakes[i].head.x && head.y === snakes[i].head.y + 1) ||
-                    (head.x === snakes[i].head.x + 1 && head.y === snakes[i].head.y - 1)) {
+                    (head.x === prediction.x && head.y === prediction.y)
+                    // ||
+                    //(head.x === snakes[i].head.x + 1 && head.y === snakes[i].head.y) ||
+                    //(head.x === snakes[i].head.x - 1 && head.y === snakes[i].head.y) ||
+                    //(head.x === snakes[i].head.x && head.y === snakes[i].head.y + 1) ||
+                    //(head.x === snakes[i].head.x + 1 && head.y === snakes[i].head.y - 1)
+                    ) {
                     return true;
                 }
             }
