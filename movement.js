@@ -35,7 +35,7 @@ const move = (gameData) => {
     dist = calculateDistance(closestFood, head);
     health = gameData.you.health;
 
-    if ((food && health < 20) || timesAte > 5) {
+    if ((food && health < 50) || timesAte > 3) {
         food.forEach(f => {
             var newDist = calculateDistance(f, head);
             if (newDist < dist && isThisFoodSafe(closestFood, gameData.you, snakes)) {
@@ -47,7 +47,7 @@ const move = (gameData) => {
                 ate = true;
             }
         });
-    } else if (!ate && timesAte < 5) {
+    } else if (!ate && timesAte < 3) {
         closestFood = { x: 10 - timesAte, y: 2 + timesAte };
     } else {
         closestFood = tail;
@@ -145,6 +145,16 @@ const possibleMoves = (head) => {
     };
 }
 
+const predictNextMove = (snake) => {
+    const head = snake.body[0];
+    const neck = snake.body[1];
+
+    var dx = head.x - neck.x;
+    var dy = head.y - neck.y;
+
+    return { x: head.x + dx, y: head.y + dy }
+}
+
 const willCollide = (myId, snakes, head, body, size, move) => {
     switch (move) {
         case "left":
@@ -199,10 +209,12 @@ const collideWithOtherSnakes = (myId, head, snakes) => {
     var i;
     for (i = 0; i < snakes.length; i++) {
         if (snakes[i].id !== myId) {
+            const prediction = predictNextMove(snakes[i]);
             var j;
             for (j = 0; j < snakes[i].body.length; j++) {
                 if ((head.x === snakes[i].body[j].x && head.y === snakes[i].body[j].y) ||
                     (head.x === snakes[i].head.x && head.y === snakes[i].head.y) ||
+                    (head.x === prediction.x && head.y === prediction.y) ||
                     (head.x === snakes[i].head.x + 1 && head.y === snakes[i].head.y) ||
                     (head.x === snakes[i].head.x - 1 && head.y === snakes[i].head.y) ||
                     (head.x === snakes[i].head.x && head.y === snakes[i].head.y + 1) ||
