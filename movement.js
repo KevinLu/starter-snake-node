@@ -35,15 +35,16 @@ const move = (gameData) => {
     dist = calculateDistance(closestFood, head);
     health = gameData.you.health;
 
+    if (head.x === closestFood.x && head.y === closestFood.y) {
+        timesAte++;
+    }
+
     if ((food && health < 50) || timesAte > 3) {
         food.forEach(f => {
             var newDist = calculateDistance(f, head);
             if (newDist < dist && isThisFoodSafe(closestFood, gameData.you, snakes)) {
                 closestFood = f;
                 dist = newDist;
-                if (!ate) {
-                    timesAte++;
-                }
                 ate = true;
             }
         });
