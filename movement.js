@@ -12,6 +12,8 @@ var closestFood;
 var dist;
 var health;
 
+var ate = false;
+var timesAte = 0;
 var lastMove = "up";
 const DIRECTIONS = ['up', 'right', 'down', 'left'];
 
@@ -19,6 +21,7 @@ const move = (gameData) => {
     //const Grid = createGrid(gameData);
     //console.log(Grid);
 
+    const turn = gameData.turn;
     myId = gameData.you.id;
     snakes = gameData.board.snakes;
     head = gameData.you.head;
@@ -32,16 +35,23 @@ const move = (gameData) => {
     dist = calculateDistance(closestFood, head);
     health = gameData.you.health;
 
-    if (food && health < 97) {
+    if ((food && health < 20) || timesAte > 5) {
         food.forEach(f => {
             var newDist = calculateDistance(f, head);
             if (newDist < dist && isThisFoodSafe(closestFood, gameData.you, snakes)) {
                 closestFood = f;
                 dist = newDist;
+                if (!ate) {
+                    timesAte++;
+                }
+                ate = true;
             }
         });
+    } else if (!ate && timesAte < 5) {
+        closestFood = { x: 10 - timesAte, y: 2 + timesAte };
     } else {
         closestFood = tail;
+        ate = false;
     }
     makeMove();
     // Check if any space is safe even if there's no food
@@ -192,7 +202,11 @@ const collideWithOtherSnakes = (myId, head, snakes) => {
             var j;
             for (j = 0; j < snakes[i].body.length; j++) {
                 if ((head.x === snakes[i].body[j].x && head.y === snakes[i].body[j].y) ||
-                    (head.x === snakes[i].head.x && head.y === snakes[i].head.y)) {
+                    (head.x === snakes[i].head.x && head.y === snakes[i].head.y) ||
+                    (head.x === snakes[i].head.x + 1 && head.y === snakes[i].head.y) ||
+                    (head.x === snakes[i].head.x - 1 && head.y === snakes[i].head.y) ||
+                    (head.x === snakes[i].head.x && head.y === snakes[i].head.y + 1) ||
+                    (head.x === snakes[i].head.x + 1 && head.y === snakes[i].head.y - 1)) {
                     return true;
                 }
             }
