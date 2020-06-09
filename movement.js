@@ -65,9 +65,6 @@ const move = (gameData) => {
                 ate = true;
             }
         });
-    } else {
-        const randDir = DIRECTIONS[getRandomInt(0, 3)];
-        closestFood = moves[randDir];
     }
     makeMove();
     // Check if any space is safe even if there's no food
